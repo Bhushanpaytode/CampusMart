@@ -8,18 +8,11 @@ SECRET_KEY = "campusmart-development-secret-key"
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "192.168.1.17",
-]
+ALLOWED_HOSTS = ["*"]
 
 
 # Allow phone/mobile access through local Wi-Fi
-CSRF_TRUSTED_ORIGINS = [
-    "http://192.168.1.17:8000",
-]
-
+CSRF_TRUSTED_ORIGINS = []
 
 # Applications
 INSTALLED_APPS = [
