@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Sell Your Product</h2>
+
+    <form method="post" enctype="multipart/form-data" class="col-md-7">
+
+        {% csrf_token %}
+
+        <label class="form-label">Product Name</label>
+        <input type="text" name="name" class="form-control mb-3" required>
+
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control mb-3" rows="4" required></textarea>
+
+        <label class="form-label">Price</label>
+        <input type="number" name="price" class="form-control mb-3" required>
+
+        <label class="form-label">Category</label>
+        <select name="category" class="form-control mb-3" required>
+            <option value="">Select Category</option>
+
+            {% for category in categories %}
+                <option value="{{ category.id }}">
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label class="form-label">Condition</label>
+        <select name="condition" class="form-control mb-3" required>
+            <option value="New">New</option>
+            <option value="Used">Used</option>
+        </select>
+
+        <label class="form-label">Product Image</label>
+        <input type="file"
+               name="image"
+               accept="image/*"
+               class="form-control mb-3">
+
+        <button type="submit" class="btn btn-primary">
+            Publish Listing
+        </button>
+
+    </form>
+</div>
+
+{% endblock %}

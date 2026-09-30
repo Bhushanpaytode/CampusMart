@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Campus Products</h2>
+
+    <!-- Search and Filter -->
+    <form class="row g-2 mb-4">
+
+        <div class="col-md-7">
+            <input
+                class="form-control"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search products">
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-select" name="category">
+                <option value="">All Categories</option>
+
+                {% for category in categories %}
+                    <option value="{{ category.id }}">
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">
+                Search
+            </button>
+        </div>
+
+    </form>
+
+
+    <!-- Products -->
+
+    <div class="row">
+
+        {% for product in products %}
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card h-100 shadow-sm">
+
+                {% if product.image %}
+
+                    <img
+                        src="{{ product.image.url }}"
+                        alt="{{ product.name }}"
+                        class="card-img-top"
+                        style="height:220px; object-fit:contain; padding:10px;">
+
+                {% else %}
+
+                    <div
+                        class="d-flex align-items-center justify-content-center bg-light"
+                        style="height:220px;">
+                        <span class="text-muted">No Image</span>
+                    </div>
+
+                {% endif %}
+
+
+                <div class="card-body d-flex flex-column">
+
+                    <h5 class="card-title">
+                        {{ product.name }}
+                    </h5>
+
+                    <p class="text-muted mb-2">
+                        {{ product.category.name }}
+                    </p>
+
+                    <p>
+                        {{ product.description|truncatewords:15 }}
+                    </p>
+
+                    <div class="mt-auto">
+
+                        <h5 class="text-success">
+                            ₹{{ product.price }}
+                        </h5>
+
+                        <p class="mb-3">
+                            <strong>Condition:</strong>
+                            {{ product.condition }}
+                        </p>
+
+                        <a
+                            href="{% url 'product_detail' product.id %}"
+                            class="btn btn-primary">
+                            View Details
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="text-center mt-4">
+            <h5>No matching products found.</h5>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
