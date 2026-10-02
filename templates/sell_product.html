@@ -2,50 +2,448 @@
 
 {% block content %}
 
-<div class="container mt-4">
-    <h2>Sell Your Product</h2>
+<style>
+    .sell-page {
+        background: #f7f8fc;
+        min-height: calc(100vh - 70px);
+        padding: 45px 20px 80px;
+    }
 
-    <form method="post" enctype="multipart/form-data" class="col-md-7">
+    .sell-container {
+        max-width: 1050px;
+        margin: auto;
+    }
 
-        {% csrf_token %}
+    .sell-hero {
+        background:
+            radial-gradient(circle at 85% 20%, rgba(255, 209, 102, .15), transparent 25%),
+            linear-gradient(135deg, #080b20, #252b63);
+        color: white;
+        border-radius: 26px;
+        padding: 42px;
+        margin-bottom: 30px;
+    }
 
-        <label class="form-label">Product Name</label>
-        <input type="text" name="name" class="form-control mb-3" required>
+    .sell-label {
+        color: #ffd166;
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 2px;
+    }
 
-        <label class="form-label">Description</label>
-        <textarea name="description" class="form-control mb-3" rows="4" required></textarea>
+    .sell-hero h1 {
+        font-size: clamp(35px, 5vw, 52px);
+        font-weight: 850;
+        letter-spacing: -1.5px;
+        margin: 8px 0;
+    }
 
-        <label class="form-label">Price</label>
-        <input type="number" name="price" class="form-control mb-3" required>
+    .sell-hero p {
+        color: rgba(255,255,255,.65);
+        max-width: 620px;
+        margin: 0;
+        line-height: 1.7;
+    }
 
-        <label class="form-label">Category</label>
-        <select name="category" class="form-control mb-3" required>
-            <option value="">Select Category</option>
+    .sell-card {
+        background: white;
+        border: 1px solid #e8eaf1;
+        border-radius: 24px;
+        padding: 35px;
+        box-shadow: 0 18px 50px rgba(30,35,80,.07);
+    }
 
-            {% for category in categories %}
-                <option value="{{ category.id }}">
-                    {{ category.name }}
-                </option>
-            {% endfor %}
-        </select>
+    .form-title {
+        color: #171b35;
+        font-size: 24px;
+        font-weight: 850;
+        margin-bottom: 5px;
+    }
 
-        <label class="form-label">Condition</label>
-        <select name="condition" class="form-control mb-3" required>
-            <option value="New">New</option>
-            <option value="Used">Used</option>
-        </select>
+    .form-subtitle {
+        color: #858a9c;
+        font-size: 13px;
+        margin-bottom: 30px;
+    }
 
-        <label class="form-label">Product Image</label>
-        <input type="file"
-               name="image"
-               accept="image/*"
-               class="form-control mb-3">
+    .form-label {
+        color: #252945;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
 
-        <button type="submit" class="btn btn-primary">
-            Publish Listing
-        </button>
+    .form-control,
+    .form-select {
+        border: 1px solid #e1e4ed;
+        border-radius: 11px;
+        padding: 12px 14px;
+        font-size: 13px;
+        color: #252945;
+        box-shadow: none !important;
+    }
 
-    </form>
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #6670d4;
+    }
+
+    textarea.form-control {
+        min-height: 140px;
+        resize: vertical;
+    }
+
+    .image-box {
+        border: 2px dashed #dfe2eb;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        background: #fafbfe;
+        transition: .25s ease;
+    }
+
+    .image-box:hover {
+        border-color: #6670d4;
+        background: #f7f8ff;
+    }
+
+    .image-icon {
+        font-size: 38px;
+        margin-bottom: 8px;
+    }
+
+    .image-text {
+        color: #555b70;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .image-help {
+        color: #999eae;
+        font-size: 11px;
+        margin-top: 4px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        border: none;
+        background: #303b92;
+        color: white;
+        border-radius: 12px;
+        padding: 14px 20px;
+        font-size: 14px;
+        font-weight: 850;
+        margin-top: 10px;
+        transition: .25s ease;
+    }
+
+    .submit-btn:hover {
+        background: #242d73;
+        transform: translateY(-2px);
+    }
+
+    .cancel-btn {
+        display: block;
+        text-align: center;
+        color: #858a9c;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 15px;
+    }
+
+    .cancel-btn:hover {
+        color: #303b92;
+    }
+
+    .tips-card {
+        background: #f7f8fc;
+        border: 1px solid #e8eaf1;
+        border-radius: 16px;
+        padding: 20px;
+        margin-top: 25px;
+    }
+
+    .tips-card h3 {
+        color: #171b35;
+        font-size: 14px;
+        font-weight: 850;
+        margin-bottom: 12px;
+    }
+
+    .tips-card p {
+        color: #858a9c;
+        font-size: 12px;
+        line-height: 1.7;
+        margin: 5px 0;
+    }
+
+    @media (max-width: 576px) {
+        .sell-page {
+            padding: 30px 15px 60px;
+        }
+
+        .sell-hero {
+            padding: 30px 24px;
+        }
+
+        .sell-card {
+            padding: 25px 20px;
+        }
+    }
+</style>
+
+
+<div class="sell-page">
+
+    <div class="sell-container">
+
+        <!-- HERO -->
+
+        <section class="sell-hero">
+
+            <span class="sell-label">
+                CAMPUSMART SELLER
+            </span>
+
+            <h1>Sell something useful.</h1>
+
+            <p>
+                List your unused books, electronics, stationery,
+                bicycles or other college items and connect with
+                students who need them.
+            </p>
+
+        </section>
+
+
+        <!-- FORM CARD -->
+
+        <div class="sell-card">
+
+            <div class="form-title">
+                Create a Listing
+            </div>
+
+            <div class="form-subtitle">
+                Add some details about the product you're selling.
+            </div>
+
+
+            <form method="post" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+
+                <!-- PRODUCT NAME -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        placeholder="e.g. Engineering Mathematics Book"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        placeholder="Describe the product, its condition and any important details..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <!-- PRICE -->
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label">
+                            Price (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            name="price"
+                            class="form-control"
+                            placeholder="Enter price"
+                            min="1"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- CONDITION -->
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label">
+                            Condition
+                        </label>
+
+                        <select
+                            name="condition"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select condition
+                            </option>
+
+                            <option value="New">
+                                New
+                            </option>
+
+                            <option value="Used">
+                                Used
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label">
+                            Category
+                        </label>
+
+                        <select
+                            name="category"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select category
+                            </option>
+
+                            {% for category in categories %}
+
+                            <option value="{{ category.id }}">
+                                {{ category.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- IMAGE -->
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label">
+                            Product Image
+                        </label>
+
+                        <div class="image-box">
+
+                            <div class="image-icon">
+                                📷
+                            </div>
+
+                            <div class="image-text">
+                                Upload product photo
+                            </div>
+
+                            <div class="image-help">
+                                JPG, PNG or other supported image
+                            </div>
+
+                            <input
+                                type="file"
+                                name="image"
+                                class="form-control mt-3"
+                                accept="image/*"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                >
+                    🚀 Publish Product
+                </button>
+
+
+                <a
+                    href="{% url 'products' %}"
+                    class="cancel-btn"
+                >
+                    Cancel and return to Marketplace
+                </a>
+
+            </form>
+
+
+            <!-- TIPS -->
+
+            <div class="tips-card">
+
+                <h3>
+                    💡 Tips for a good listing
+                </h3>
+
+                <p>
+                    ✓ Use a clear and accurate product name.
+                </p>
+
+                <p>
+                    ✓ Mention the actual condition of the item.
+                </p>
+
+                <p>
+                    ✓ Add a clear product photo whenever possible.
+                </p>
+
+                <p>
+                    ✓ Set a reasonable price for students.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 {% endblock %}

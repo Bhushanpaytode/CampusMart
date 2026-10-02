@@ -1,102 +1,845 @@
 {% extends "base.html" %}
 
+{% block title %}Marketplace - CampusMart{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<style>
 
-    <h2 class="mb-4">Campus Products</h2>
+/* =========================================
+   MARKETPLACE PAGE
+========================================= */
 
-    <!-- Search and Filter -->
-    <form class="row g-2 mb-4">
-
-        <div class="col-md-7">
-            <input
-                class="form-control"
-                name="q"
-                value="{{ query }}"
-                placeholder="Search products">
-        </div>
-
-        <div class="col-md-3">
-            <select class="form-select" name="category">
-                <option value="">All Categories</option>
-
-                {% for category in categories %}
-                    <option value="{{ category.id }}">
-                        {{ category.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <button class="btn btn-primary w-100">
-                Search
-            </button>
-        </div>
-
-    </form>
+.marketplace-page {
+    background: #f6f7fb;
+    min-height: 100vh;
+}
 
 
-    <!-- Products -->
+/* =========================================
+   MARKETPLACE HERO
+========================================= */
 
-    <div class="row">
+.marketplace-hero {
+    position: relative;
+    overflow: hidden;
 
-        {% for product in products %}
+    padding: 65px 0 55px;
 
-        <div class="col-md-4 mb-4">
+    background:
+        radial-gradient(
+            circle at 10% 20%,
+            rgba(91,105,255,.22),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(255,193,7,.13),
+            transparent 28%
+        ),
+        linear-gradient(
+            135deg,
+            #070918,
+            #111735 55%,
+            #080b20
+        );
 
-            <div class="card h-100 shadow-sm">
+    color: white;
+}
 
-                {% if product.image %}
 
-                    <img
-                        src="{{ product.image.url }}"
-                        alt="{{ product.name }}"
-                        class="card-img-top"
-                        style="height:220px; object-fit:contain; padding:10px;">
+.marketplace-hero::before {
+    content: "";
 
-                {% else %}
+    position: absolute;
 
-                    <div
-                        class="d-flex align-items-center justify-content-center bg-light"
-                        style="height:220px;">
-                        <span class="text-muted">No Image</span>
+    width: 350px;
+    height: 350px;
+
+    right: -120px;
+    top: -180px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(91,105,255,.17);
+
+    filter: blur(70px);
+}
+
+
+.marketplace-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+
+.marketplace-label {
+    color: #ffd166;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 10px;
+}
+
+
+.marketplace-title {
+    font-size: clamp(38px, 5vw, 58px);
+
+    font-weight: 700;
+
+    letter-spacing: -2px;
+
+    margin-bottom: 12px;
+}
+
+
+.marketplace-title span {
+    color: #ffd166;
+}
+
+
+.marketplace-description {
+    color:
+        rgba(255,255,255,.58);
+
+    font-size: 14px;
+
+    max-width: 560px;
+
+    line-height: 1.7;
+
+    margin-bottom: 30px;
+}
+
+
+/* =========================================
+   SEARCH AREA
+========================================= */
+
+.market-search-box {
+    padding: 18px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    backdrop-filter:
+        blur(18px);
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.22);
+}
+
+
+.market-search-box .form-control,
+.market-search-box .form-select {
+
+    min-height: 48px;
+
+    border-radius: 11px;
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    background:
+        rgba(255,255,255,.08);
+
+    color: white;
+
+    font-size: 13px;
+}
+
+
+.market-search-box .form-control::placeholder {
+    color:
+        rgba(255,255,255,.40);
+}
+
+
+.market-search-box .form-control:focus,
+.market-search-box .form-select:focus {
+
+    border-color:
+        rgba(255,209,102,.55);
+
+    box-shadow:
+        0 0 0 3px rgba(255,209,102,.10);
+
+    background:
+        rgba(255,255,255,.10);
+
+    color: white;
+}
+
+
+.market-search-box .form-select option {
+    color: #171a2b;
+}
+
+
+.search-btn {
+
+    min-height: 48px;
+
+    width: 100%;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe08a,
+            #ffb703
+        );
+
+    color: #15182f;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition: .25s ease;
+}
+
+
+.search-btn:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(255,190,50,.25);
+}
+
+
+/* =========================================
+   PRODUCT SECTION
+========================================= */
+
+.products-section {
+    padding: 60px 0 80px;
+}
+
+
+.products-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: end;
+
+    margin-bottom: 25px;
+}
+
+
+.products-heading h2 {
+
+    font-size: 27px;
+
+    font-weight: 700;
+
+    letter-spacing: -.7px;
+
+    margin: 0 0 5px;
+}
+
+
+.products-heading p {
+
+    color: #858998;
+
+    font-size: 13px;
+
+    margin: 0;
+}
+
+
+.product-count {
+
+    color: #6659d8;
+
+    background: #f0efff;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================
+   PRODUCT CARD
+========================================= */
+
+.market-product-card {
+
+    height: 100%;
+
+    overflow: hidden;
+
+    background: white;
+
+    border:
+        1px solid #e9ebf3;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 28px rgba(24,31,56,.05);
+
+    transition: .25s ease;
+}
+
+
+.market-product-card:hover {
+
+    transform:
+        translateY(-6px);
+
+    box-shadow:
+        0 18px 45px rgba(24,31,56,.12);
+
+    border-color:
+        #dddff0;
+}
+
+
+.market-product-image {
+
+    height: 210px;
+
+    position: relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef0ff,
+            #f8f8fc
+        );
+
+    overflow: hidden;
+}
+
+
+.market-product-image img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: .4s ease;
+}
+
+
+.market-product-card:hover
+.market-product-image img {
+
+    transform:
+        scale(1.04);
+}
+
+
+.market-no-image {
+
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+
+    place-items: center;
+
+    font-size: 45px;
+
+    opacity: .45;
+}
+
+
+.condition-badge {
+
+    position: absolute;
+
+    top: 13px;
+    left: 13px;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,.92);
+
+    color:
+        #6659d8;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.08);
+}
+
+
+.market-product-body {
+
+    padding: 19px;
+}
+
+
+.market-category {
+
+    color: #8b7cf6;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: .7px;
+
+    margin-bottom: 7px;
+}
+
+
+.market-product-body h5 {
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.market-product-description {
+
+    color: #858998;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+    height: 38px;
+
+    overflow: hidden;
+
+    margin-bottom: 15px;
+}
+
+
+.market-product-bottom {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding-top: 13px;
+
+    border-top:
+        1px solid #f0f1f5;
+}
+
+
+.market-price {
+
+    color: #171a2b;
+
+    font-size: 17px;
+
+    font-weight: 700;
+}
+
+
+.view-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 8px 12px;
+
+    border-radius: 9px;
+
+    background: #f0efff;
+
+    color: #6659d8;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    transition: .2s ease;
+}
+
+
+.view-btn:hover {
+
+    color: white;
+
+    background:
+        #6659d8;
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-market {
+
+    padding: 80px 20px;
+
+    text-align: center;
+
+    background: white;
+
+    border:
+        1px solid #e9ebf3;
+
+    border-radius: 22px;
+}
+
+
+.empty-icon {
+
+    width: 70px;
+    height: 70px;
+
+    display: grid;
+
+    place-items: center;
+
+    margin: 0 auto 18px;
+
+    border-radius: 20px;
+
+    background: #f0efff;
+
+    font-size: 30px;
+}
+
+
+.empty-market h4 {
+
+    font-size: 19px;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+}
+
+
+.empty-market p {
+
+    color: #858998;
+
+    font-size: 13px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 767px) {
+
+    .marketplace-hero {
+
+        padding:
+            50px 0 45px;
+    }
+
+
+    .marketplace-title {
+
+        font-size: 40px;
+
+        letter-spacing: -1.5px;
+    }
+
+
+    .products-heading {
+
+        align-items: start;
+
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+
+    .market-product-image {
+
+        height: 190px;
+    }
+
+}
+
+</style>
+
+
+<div class="marketplace-page">
+
+
+<!-- =========================================
+     HERO
+========================================= -->
+
+<section class="marketplace-hero">
+
+    <div class="container">
+
+        <div class="marketplace-hero-content">
+
+            <div class="marketplace-label">
+                Campus marketplace
+            </div>
+
+
+            <h1 class="marketplace-title">
+                Discover <span>great finds.</span>
+            </h1>
+
+
+            <p class="marketplace-description">
+                Browse products listed by students.
+                Search for books, electronics, stationery,
+                bicycles and other useful campus items.
+            </p>
+
+
+            <!-- SEARCH -->
+
+            <div class="market-search-box">
+
+                <form
+                    method="get"
+                    action="{% url 'products' %}"
+                >
+
+                    <div class="row g-2">
+
+
+                        <!-- SEARCH -->
+
+                        <div class="col-lg-6">
+
+                            <input
+                                type="text"
+                                name="q"
+                                class="form-control"
+                                placeholder="Search for a product..."
+                                value="{{ request.GET.q|default:'' }}"
+                            >
+
+                        </div>
+
+
+                        <!-- CATEGORY -->
+
+                        <div class="col-md-6 col-lg-3">
+
+                            <select
+                                name="category"
+                                class="form-select"
+                            >
+
+                                <option value="">
+                                    All Categories
+                                </option>
+
+
+                                {% for category in categories %}
+
+                                <option
+                                    value="{{ category.id }}"
+                                    {% if request.GET.category == category.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ category.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- SEARCH BUTTON -->
+
+                        <div class="col-md-6 col-lg-3">
+
+                            <button
+                                type="submit"
+                                class="search-btn"
+                            >
+                                🔍 Search
+                            </button>
+
+                        </div>
+
                     </div>
 
-                {% endif %}
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
 
-                <div class="card-body d-flex flex-column">
 
-                    <h5 class="card-title">
-                        {{ product.name }}
-                    </h5>
+<!-- =========================================
+     PRODUCTS
+========================================= -->
 
-                    <p class="text-muted mb-2">
-                        {{ product.category.name }}
-                    </p>
+<section class="products-section">
 
-                    <p>
-                        {{ product.description|truncatewords:15 }}
-                    </p>
+    <div class="container">
 
-                    <div class="mt-auto">
 
-                        <h5 class="text-success">
-                            ₹{{ product.price }}
+        <div class="products-heading">
+
+            <div>
+
+                <h2>
+                    Marketplace
+                </h2>
+
+                <p>
+                    Find something useful for your campus life.
+                </p>
+
+            </div>
+
+
+            <div class="product-count">
+
+                {{ products|length }} products
+
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCT GRID -->
+
+        <div class="row g-4">
+
+
+            {% for product in products %}
+
+            <div class="col-sm-6 col-lg-4 col-xl-3">
+
+                <div class="market-product-card">
+
+
+                    <!-- IMAGE -->
+
+                    <div class="market-product-image">
+
+                        {% if product.image %}
+
+                            <img
+                                src="{{ product.image.url }}"
+                                alt="{{ product.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="market-no-image">
+                                🛍️
+                            </div>
+
+                        {% endif %}
+
+
+                        <span class="condition-badge">
+                            {{ product.condition }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- BODY -->
+
+                    <div class="market-product-body">
+
+
+                        <div class="market-category">
+
+                            {{ product.category.name }}
+
+                        </div>
+
+
+                        <h5>
+
+                            {{ product.name }}
+
                         </h5>
 
-                        <p class="mb-3">
-                            <strong>Condition:</strong>
-                            {{ product.condition }}
+
+                        <p class="market-product-description">
+
+                            {{ product.description }}
+
                         </p>
 
-                        <a
-                            href="{% url 'product_detail' product.id %}"
-                            class="btn btn-primary">
-                            View Details
-                        </a>
+
+                        <div class="market-product-bottom">
+
+                            <div class="market-price">
+
+                                ₹{{ product.price }}
+
+                            </div>
+
+
+                            <a
+                                href="{% url 'product_detail' product.id %}"
+                                class="view-btn"
+                            >
+                                View Details
+                            </a>
+
+                        </div>
+
 
                     </div>
 
@@ -104,17 +847,49 @@
 
             </div>
 
+
+            {% empty %}
+
+
+            <div class="col-12">
+
+                <div class="empty-market">
+
+                    <div class="empty-icon">
+                        🛍️
+                    </div>
+
+                    <h4>
+                        No products found
+                    </h4>
+
+                    <p>
+                        Try another search or browse all categories.
+                    </p>
+
+
+                    <a
+                        href="{% url 'products' %}"
+                        class="view-btn"
+                        style="padding:10px 16px;"
+                    >
+                        View All Products
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            {% endfor %}
+
+
         </div>
-
-        {% empty %}
-
-        <div class="text-center mt-4">
-            <h5>No matching products found.</h5>
-        </div>
-
-        {% endfor %}
 
     </div>
+
+</section>
+
 
 </div>
 

@@ -1,71 +1,1175 @@
 {% extends "base.html" %}
 
+{% block title %}CampusMart - Buy & Sell on Campus{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<style>
 
-    <!-- Welcome Section -->
-    <div class="p-5 mb-4 bg-light rounded-3 text-center">
-        <h1 class="display-5 fw-bold">Welcome to CampusMart</h1>
+/* =========================================
+   HOME PAGE
+========================================= */
 
-        <p class="lead">
-            Buy and sell useful products within your campus community.
-        </p>
+.home-page {
+    overflow: hidden;
+}
 
-        <a href="{% url 'products' %}" class="btn btn-primary btn-lg">
-            Browse Marketplace
-        </a>
 
-        {% if user.is_authenticated %}
-            <a href="{% url 'sell_product' %}" class="btn btn-success btn-lg ms-2">
-                Sell a Product
-            </a>
-        {% endif %}
-    </div>
+/* =========================================
+   HERO
+========================================= */
 
-    <!-- Latest Products -->
-    <h2 class="mb-4">Latest Products</h2>
+.cm-hero {
+    position: relative;
+    padding: 90px 0 80px;
 
-    <div class="row">
+    background:
+        radial-gradient(
+            circle at 10% 20%,
+            rgba(91,105,255,.22),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(255,193,7,.16),
+            transparent 28%
+        ),
+        linear-gradient(
+            135deg,
+            #070918,
+            #111735 55%,
+            #080b20
+        );
 
-        {% for product in products %}
+    color: white;
+    overflow: hidden;
+}
 
-        <div class="col-md-4 mb-4">
 
-            <div class="card h-100 shadow-sm">
+/* Hero glow */
 
-                {% if product.image %}
-                    <img src="{{ product.image.url }}"
-                         class="card-img-top"
-                         style="height:220px; object-fit:cover;">
-                {% else %}
-                    <div class="bg-light text-center p-5">
-                        No Image
-                    </div>
-                {% endif %}
+.cm-hero::before {
+    content: "";
 
-                <div class="card-body">
+    position: absolute;
 
-                    <h5 class="card-title">
-                        {{ product.name }}
-                    </h5>
+    width: 450px;
+    height: 450px;
 
-                    <p class="text-muted">
-                        {{ product.category.name }}
-                    </p>
+    right: -150px;
+    top: -180px;
 
-                    <h5 class="text-success">
-                        ₹{{ product.price }}
-                    </h5>
+    border-radius: 50%;
 
-                    <p>
-                        Condition: {{ product.condition }}
-                    </p>
+    background:
+        rgba(92,105,255,.18);
 
-                    <a href="{% url 'product_detail' product.id %}"
-                       class="btn btn-primary">
-                        View Details
+    filter: blur(80px);
+}
+
+
+.cm-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    left: -150px;
+    bottom: -180px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,193,7,.10);
+
+    filter: blur(70px);
+}
+
+
+.cm-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================
+   HERO BADGE
+========================================= */
+
+.hero-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,.07);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    color:
+        rgba(255,255,255,.75);
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    margin-bottom: 22px;
+
+    backdrop-filter: blur(10px);
+}
+
+
+.hero-badge span {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #ffd166;
+
+    box-shadow:
+        0 0 10px rgba(255,209,102,.8);
+}
+
+
+/* =========================================
+   HERO TITLE
+========================================= */
+
+.hero-title {
+    font-size: clamp(42px, 6vw, 72px);
+
+    line-height: 1.02;
+
+    font-weight: 800;
+
+    letter-spacing: -2.5px;
+
+    margin-bottom: 22px;
+}
+
+
+.hero-title span {
+    color: #ffd166;
+}
+
+
+.hero-description {
+    max-width: 570px;
+
+    color:
+        rgba(255,255,255,.65);
+
+    font-size: 16px;
+
+    line-height: 1.8;
+
+    margin-bottom: 30px;
+}
+
+
+/* =========================================
+   HERO BUTTONS
+========================================= */
+
+.hero-buttons {
+    display: flex;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 30px;
+}
+
+
+.hero-primary-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 13px 21px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe08a,
+            #ffb703
+        );
+
+    color: #15182f;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 10px 30px rgba(255,190,50,.22);
+
+    transition: .25s ease;
+}
+
+
+.hero-primary-btn:hover {
+    color: #15182f;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 35px rgba(255,190,50,.32);
+}
+
+
+.hero-secondary-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 13px 21px;
+
+    border-radius: 12px;
+
+    color: white;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:
+        1px solid rgba(255,255,255,.14);
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    backdrop-filter: blur(10px);
+
+    transition: .25s ease;
+}
+
+
+.hero-secondary-btn:hover {
+    color: white;
+
+    background:
+        rgba(255,255,255,.10);
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* =========================================
+   TRUST ITEMS
+========================================= */
+
+.hero-trust {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 20px;
+
+    color:
+        rgba(255,255,255,.48);
+
+    font-size: 12px;
+}
+
+
+.hero-trust-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.hero-trust-item strong {
+    color:
+        rgba(255,255,255,.78);
+
+    font-weight: 500;
+}
+
+
+/* =========================================
+   HERO MARKETPLACE CARD
+========================================= */
+
+.hero-visual {
+    position: relative;
+
+    min-height: 420px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.market-card {
+    width: 390px;
+
+    max-width: 100%;
+
+    padding: 22px;
+
+    border-radius: 25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.12),
+            rgba(255,255,255,.035)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.14);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.35);
+
+    backdrop-filter:
+        blur(20px);
+
+    transform:
+        rotate(2deg);
+
+    position: relative;
+
+    z-index: 3;
+}
+
+
+.market-top {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+
+.market-label {
+    color:
+        rgba(255,255,255,.55);
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+}
+
+
+.market-dot {
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #ffd166;
+
+    box-shadow:
+        0 0 12px rgba(255,209,102,.8);
+}
+
+
+.market-product {
+    padding: 18px;
+
+    border-radius: 18px;
+
+    background:
+        rgba(255,255,255,.055);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    margin-bottom: 12px;
+}
+
+
+.market-product:last-child {
+    margin-bottom: 0;
+}
+
+
+.market-product-top {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.product-icon {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 14px;
+
+    display: grid;
+
+    place-items: center;
+
+    font-size: 22px;
+
+    background:
+        rgba(255,209,102,.13);
+}
+
+
+.market-product h5 {
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin: 0 0 4px;
+}
+
+
+.market-product p {
+    color:
+        rgba(255,255,255,.45);
+
+    font-size: 11px;
+
+    margin: 0;
+}
+
+
+.market-price {
+    margin-left: auto;
+
+    color: #ffd166;
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================
+   FLOATING CARDS
+========================================= */
+
+.floating-card {
+    position: absolute;
+
+    padding: 12px 15px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(20,24,55,.88);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.3);
+
+    backdrop-filter:
+        blur(15px);
+
+    color: white;
+
+    font-size: 12px;
+
+    z-index: 4;
+}
+
+
+.floating-one {
+    top: 40px;
+    right: 0;
+
+    transform: rotate(-4deg);
+}
+
+
+.floating-two {
+    bottom: 50px;
+    left: 0;
+
+    transform: rotate(4deg);
+}
+
+
+.floating-card strong {
+    color: #ffd166;
+}
+
+
+/* =========================================
+   SECTION
+========================================= */
+
+.cm-section {
+    padding: 80px 0;
+}
+
+
+.section-label {
+    color: #8b7cf6;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1.5px;
+
+    margin-bottom: 8px;
+}
+
+
+.section-title {
+    font-size: 34px;
+
+    font-weight: 700;
+
+    letter-spacing: -1px;
+
+    margin-bottom: 10px;
+}
+
+
+.section-subtitle {
+    color: #777b8c;
+
+    font-size: 14px;
+
+    max-width: 600px;
+}
+
+
+/* =========================================
+   CATEGORY CARDS
+========================================= */
+
+.category-card {
+    display: block;
+
+    padding: 24px;
+
+    border-radius: 18px;
+
+    background: white;
+
+    border:
+        1px solid #eceef5;
+
+    color: #171a2b;
+
+    box-shadow:
+        0 8px 30px rgba(24,31,56,.05);
+
+    transition: .25s ease;
+}
+
+
+.category-card:hover {
+    color: #171a2b;
+
+    transform:
+        translateY(-5px);
+
+    box-shadow:
+        0 18px 40px rgba(24,31,56,.10);
+
+    border-color:
+        #dddff0;
+}
+
+
+.category-icon {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 14px;
+
+    background:
+        #f1f2ff;
+
+    font-size: 21px;
+
+    margin-bottom: 15px;
+}
+
+
+.category-card h5 {
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-bottom: 5px;
+}
+
+
+.category-card p {
+    color: #8a8e9e;
+
+    font-size: 12px;
+
+    margin: 0;
+}
+
+
+/* =========================================
+   PRODUCT CARDS
+========================================= */
+
+.home-product-card {
+    height: 100%;
+
+    overflow: hidden;
+
+    background: white;
+
+    border:
+        1px solid #eceef5;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 30px rgba(24,31,56,.05);
+
+    transition: .25s ease;
+}
+
+
+.home-product-card:hover {
+    transform:
+        translateY(-5px);
+
+    box-shadow:
+        0 18px 45px rgba(24,31,56,.11);
+}
+
+
+.home-product-image {
+    height: 190px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef0ff,
+            #f8f8fc
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+
+.home-product-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.no-image {
+    font-size: 42px;
+
+    opacity: .45;
+}
+
+
+.home-product-body {
+    padding: 20px;
+}
+
+
+.product-condition {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    background:
+        #f1f2ff;
+
+    color:
+        #6659d8;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    margin-bottom: 10px;
+}
+
+
+.home-product-body h5 {
+    font-size: 15px;
+
+    font-weight: 600;
+
+    margin-bottom: 8px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.home-product-price {
+    color: #171a2b;
+
+    font-size: 17px;
+
+    font-weight: 700;
+}
+
+
+.view-product {
+    color: #777b8c;
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   HOW IT WORKS
+========================================= */
+
+.step-card {
+    text-align: center;
+
+    padding: 30px 20px;
+}
+
+
+.step-number {
+    width: 54px;
+    height: 54px;
+
+    display: grid;
+
+    place-items: center;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6f63e8,
+            #8c7ff5
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 10px 25px rgba(111,99,232,.20);
+}
+
+
+.step-card h5 {
+    font-size: 15px;
+
+    font-weight: 600;
+
+    margin-bottom: 8px;
+}
+
+
+.step-card p {
+    color: #858998;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   CTA
+========================================= */
+
+.home-cta {
+    margin-bottom: 70px;
+
+    padding: 55px 40px;
+
+    border-radius: 28px;
+
+    background:
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(255,209,102,.14),
+            transparent 25%
+        ),
+        linear-gradient(
+            135deg,
+            #0a0d25,
+            #171b40
+        );
+
+    color: white;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+.home-cta h2 {
+    font-size: 30px;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+}
+
+
+.home-cta p {
+    color:
+        rgba(255,255,255,.55);
+
+    font-size: 13px;
+
+    margin-bottom: 25px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 991px) {
+
+    .cm-hero {
+        padding:
+            65px 0;
+    }
+
+    .hero-visual {
+        margin-top: 50px;
+
+        min-height: 360px;
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .cm-hero {
+        padding:
+            50px 0;
+    }
+
+    .hero-title {
+        font-size: 42px;
+
+        letter-spacing: -1.5px;
+    }
+
+    .hero-description {
+        font-size: 14px;
+    }
+
+    .hero-visual {
+        min-height: 330px;
+    }
+
+    .market-card {
+        width: 330px;
+    }
+
+    .floating-one {
+        right: -5px;
+    }
+
+    .floating-two {
+        left: -5px;
+    }
+
+    .cm-section {
+        padding: 60px 0;
+    }
+
+    .section-title {
+        font-size: 28px;
+    }
+
+    .home-cta {
+        padding:
+            40px 25px;
+    }
+
+}
+
+</style>
+
+
+<div class="home-page">
+
+
+<!-- =========================================
+     HERO
+========================================= -->
+
+<section class="cm-hero">
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <!-- LEFT -->
+
+            <div class="col-lg-6 cm-hero-content">
+
+                <div class="hero-badge">
+                    <span></span>
+                    Student marketplace
+                </div>
+
+
+                <h1 class="hero-title">
+
+                    Buy.
+                    Sell.
+                    <br>
+
+                    <span>Campus.</span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    CampusMart is a simple marketplace made for students.
+                    Discover useful products, sell things you no longer need,
+                    and connect with your campus community.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="{% url 'products' %}"
+                        class="hero-primary-btn"
+                    >
+                        Explore Marketplace →
                     </a>
+
+
+                    {% if user.is_authenticated %}
+
+                    <a
+                        href="{% url 'sell_product' %}"
+                        class="hero-secondary-btn"
+                    >
+                        + Sell a Product
+                    </a>
+
+                    {% else %}
+
+                    <a
+                        href="{% url 'register' %}"
+                        class="hero-secondary-btn"
+                    >
+                        Create Account
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="hero-trust">
+
+                    <div class="hero-trust-item">
+                        ✓
+                        <strong>Student focused</strong>
+                    </div>
+
+                    <div class="hero-trust-item">
+                        ✓
+                        <strong>Simple & secure</strong>
+                    </div>
+
+                    <div class="hero-trust-item">
+                        ✓
+                        <strong>Easy to use</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+
+            <div class="col-lg-6">
+
+                <div class="hero-visual">
+
+
+                    <div class="floating-card floating-one">
+
+                        ✨
+                        <strong>New listings</strong>
+
+                    </div>
+
+
+                    <div class="market-card">
+
+                        <div class="market-top">
+
+                            <span class="market-label">
+                                Campus marketplace
+                            </span>
+
+                            <span class="market-dot"></span>
+
+                        </div>
+
+
+                        <div class="market-product">
+
+                            <div class="market-product-top">
+
+                                <div class="product-icon">
+                                    📚
+                                </div>
+
+                                <div>
+
+                                    <h5>
+                                        Study Materials
+                                    </h5>
+
+                                    <p>
+                                        Books & notes
+                                    </p>
+
+                                </div>
+
+                                <div class="market-price">
+                                    ₹250
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="market-product">
+
+                            <div class="market-product-top">
+
+                                <div class="product-icon">
+                                    🎧
+                                </div>
+
+                                <div>
+
+                                    <h5>
+                                        Headphones
+                                    </h5>
+
+                                    <p>
+                                        Electronics
+                                    </p>
+
+                                </div>
+
+                                <div class="market-price">
+                                    ₹800
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="market-product">
+
+                            <div class="market-product-top">
+
+                                <div class="product-icon">
+                                    🚲
+                                </div>
+
+                                <div>
+
+                                    <h5>
+                                        Bicycle
+                                    </h5>
+
+                                    <p>
+                                        Campus ride
+                                    </p>
+
+                                </div>
+
+                                <div class="market-price">
+                                    ₹2,500
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="floating-card floating-two">
+
+                        🛒
+                        <strong>Easy buying</strong>
+
+                    </div>
 
                 </div>
 
@@ -73,15 +1177,487 @@
 
         </div>
 
-        {% empty %}
+    </div>
 
-        <div class="text-center">
-            <p>No products available yet.</p>
+</section>
+
+
+
+<!-- =========================================
+     CATEGORIES
+========================================= -->
+
+<section class="cm-section">
+
+    <div class="container">
+
+        <div class="mb-4">
+
+            <div class="section-label">
+                Explore
+            </div>
+
+            <h2 class="section-title">
+                Shop by Category
+            </h2>
+
+            <p class="section-subtitle">
+                Find products students commonly need around campus.
+            </p>
+
         </div>
 
-        {% endfor %}
+
+        <div class="row g-3">
+
+
+            <div class="col-6 col-md-4 col-lg-2">
+
+                <a
+                    href="{% url 'products' %}?category=1"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+                        📚
+                    </div>
+
+                    <h5>
+                        Books
+                    </h5>
+
+                    <p>
+                        Study materials
+                    </p>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-6 col-md-4 col-lg-2">
+
+                <a
+                    href="{% url 'products' %}"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+                        💻
+                    </div>
+
+                    <h5>
+                        Electronics
+                    </h5>
+
+                    <p>
+                        Devices & accessories
+                    </p>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-6 col-md-4 col-lg-2">
+
+                <a
+                    href="{% url 'products' %}"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+                        ✏️
+                    </div>
+
+                    <h5>
+                        Stationery
+                    </h5>
+
+                    <p>
+                        College essentials
+                    </p>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-6 col-md-4 col-lg-2">
+
+                <a
+                    href="{% url 'products' %}"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+                        🚲
+                    </div>
+
+                    <h5>
+                        Bicycles
+                    </h5>
+
+                    <p>
+                        Campus rides
+                    </p>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-6 col-md-4 col-lg-2">
+
+                <a
+                    href="{% url 'products' %}"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+                        🎒
+                    </div>
+
+                    <h5>
+                        Accessories
+                    </h5>
+
+                    <p>
+                        Student lifestyle
+                    </p>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-6 col-md-4 col-lg-2">
+
+                <a
+                    href="{% url 'products' %}"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+                        🛍️
+                    </div>
+
+                    <h5>
+                        Others
+                    </h5>
+
+                    <p>
+                        More products
+                    </p>
+
+                </a>
+
+            </div>
+
+        </div>
 
     </div>
+
+</section>
+
+
+
+<!-- =========================================
+     RECENT PRODUCTS
+========================================= -->
+
+<section class="cm-section pt-0">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-end mb-4">
+
+            <div>
+
+                <div class="section-label">
+                    Marketplace
+                </div>
+
+                <h2 class="section-title mb-1">
+                    Recently Added
+                </h2>
+
+                <p class="section-subtitle">
+                    Check out the latest products listed by students.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'products' %}"
+                class="d-none d-sm-block"
+                style="
+                    color:#6659d8;
+                    font-size:13px;
+                    font-weight:600;
+                "
+            >
+                View All →
+            </a>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            {% for product in products %}
+
+            <div class="col-sm-6 col-lg-4">
+
+                <div class="home-product-card">
+
+
+                    <div class="home-product-image">
+
+                        {% if product.image %}
+
+                            <img
+                                src="{{ product.image.url }}"
+                                alt="{{ product.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="no-image">
+                                🛍️
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="home-product-body">
+
+                        <span class="product-condition">
+                            {{ product.condition }}
+                        </span>
+
+
+                        <h5>
+                            {{ product.name }}
+                        </h5>
+
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div class="home-product-price">
+                                ₹{{ product.price }}
+                            </div>
+
+
+                            <a
+                                href="{% url 'product_detail' product.id %}"
+                                class="view-product"
+                            >
+                                View →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% empty %}
+
+            <div class="col-12">
+
+                <div class="text-center py-5">
+
+                    <div style="font-size:45px;">
+                        🛍️
+                    </div>
+
+                    <h5 class="mt-3">
+                        No products yet
+                    </h5>
+
+                    <p class="text-muted">
+                        Be the first student to list a product.
+                    </p>
+
+                    {% if user.is_authenticated %}
+
+                    <a
+                        href="{% url 'sell_product' %}"
+                        class="hero-primary-btn"
+                    >
+                        Sell Your First Product
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     HOW IT WORKS
+========================================= -->
+
+<section
+    class="cm-section"
+    style="background:#ffffff;"
+>
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <div class="section-label">
+                Simple process
+            </div>
+
+            <h2 class="section-title">
+                How CampusMart Works
+            </h2>
+
+            <p class="section-subtitle mx-auto">
+                Buy or sell products in just a few simple steps.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-md-4">
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+                    <h5>
+                        Create an Account
+                    </h5>
+
+                    <p>
+                        Register on CampusMart and become part of
+                        the student marketplace.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <h5>
+                        Find or List Products
+                    </h5>
+
+                    <p>
+                        Browse available products or create your
+                        own listing to sell something.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <h5>
+                        Place Your Order
+                    </h5>
+
+                    <p>
+                        Choose a product and place your order
+                        directly through the marketplace.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     CTA
+========================================= -->
+
+<section class="container">
+
+    <div class="home-cta">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-8">
+
+                <h2>
+                    Ready to explore CampusMart?
+                </h2>
+
+                <p>
+                    Discover useful products, find great deals,
+                    and give your unused items a new home.
+                </p>
+
+            </div>
+
+
+            <div class="col-lg-4 text-lg-end">
+
+                <a
+                    href="{% url 'products' %}"
+                    class="hero-primary-btn"
+                >
+                    Explore Marketplace →
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 </div>
 

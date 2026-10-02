@@ -2,95 +2,464 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<style>
+    .orders-page {
+        background: #f7f8fc;
+        min-height: calc(100vh - 70px);
+        padding: 50px 20px 80px;
+    }
 
-    <h2 class="mb-4">My Orders</h2>
+    .orders-container {
+        max-width: 1100px;
+        margin: auto;
+    }
 
-    {% if orders %}
+    .orders-hero {
+        background:
+            radial-gradient(circle at 85% 20%, rgba(255, 209, 102, .14), transparent 25%),
+            linear-gradient(135deg, #080b20, #252b63);
+        color: white;
+        border-radius: 26px;
+        padding: 42px;
+        margin-bottom: 35px;
+    }
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle shadow-sm">
+    .orders-label {
+        color: #ffd166;
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 2px;
+    }
 
-            <thead class="table-dark">
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Total Price</th>
-                    <th>Order Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
+    .orders-hero h1 {
+        font-size: clamp(34px, 5vw, 52px);
+        font-weight: 850;
+        letter-spacing: -1.5px;
+        margin: 8px 0;
+    }
 
-            <tbody>
+    .orders-hero p {
+        color: rgba(255,255,255,.65);
+        margin: 0;
+        max-width: 600px;
+    }
 
-                {% for order in orders %}
+    .orders-section-title {
+        margin-bottom: 22px;
+    }
 
-                <tr>
-                    <td>
-                        <strong>{{ order.product.name }}</strong>
-                    </td>
+    .orders-section-title h2 {
+        color: #171b35;
+        font-size: 28px;
+        font-weight: 850;
+        margin: 0;
+    }
 
-                    <td>
-                        {{ order.quantity }}
-                    </td>
+    .orders-section-title p {
+        color: #8a8fa1;
+        font-size: 13px;
+        margin-top: 5px;
+    }
 
-                    <td>
-                        <strong class="text-success">
-                            ₹{{ order.total_price }}
-                        </strong>
-                    </td>
+    .order-card {
+        background: white;
+        border: 1px solid #e8eaf1;
+        border-radius: 20px;
+        padding: 22px;
+        margin-bottom: 18px;
+        transition: .25s ease;
+    }
 
-                    <td>
+    .order-card:hover {
+        box-shadow: 0 15px 40px rgba(30,35,80,.08);
+        transform: translateY(-2px);
+    }
+
+    .order-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+    .order-number {
+        color: #8a8fa1;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .order-date {
+        color: #999eae;
+        font-size: 11px;
+    }
+
+    .order-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .order-image {
+        width: 120px;
+        height: 100px;
+        flex-shrink: 0;
+        background: #eef0f6;
+        border-radius: 14px;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+    }
+
+    .order-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .order-placeholder {
+        font-size: 38px;
+    }
+
+    .order-details {
+        flex: 1;
+    }
+
+    .order-category {
+        color: #6670d4;
+        font-size: 10px;
+        font-weight: 850;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .order-details h3 {
+        color: #171b35;
+        font-size: 19px;
+        font-weight: 800;
+        margin: 5px 0;
+    }
+
+    .order-details p {
+        color: #858a9c;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .order-price {
+        text-align: right;
+        min-width: 120px;
+    }
+
+    .order-price small {
+        display: block;
+        color: #999eae;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .order-price strong {
+        color: #303b92;
+        font-size: 21px;
+        font-weight: 850;
+    }
+
+    .status-badge {
+        display: inline-block;
+        margin-top: 6px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        background: #fff7e6;
+        color: #9a701d;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .order-bottom {
+        border-top: 1px solid #eef0f5;
+        margin-top: 20px;
+        padding-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .quantity {
+        color: #858a9c;
+        font-size: 12px;
+    }
+
+    .view-order-btn {
+        color: #303b92;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .view-order-btn:hover {
+        color: #242d73;
+    }
+
+    .empty-orders {
+        background: white;
+        border: 1px solid #e8eaf1;
+        border-radius: 22px;
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-orders-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+    }
+
+    .empty-orders h3 {
+        color: #171b35;
+        font-weight: 850;
+    }
+
+    .empty-orders p {
+        color: #858a9c;
+        margin-bottom: 22px;
+    }
+
+    .shop-btn {
+        display: inline-block;
+        background: #303b92;
+        color: white;
+        text-decoration: none;
+        padding: 11px 20px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .shop-btn:hover {
+        background: #242d73;
+        color: white;
+    }
+
+    @media (max-width: 700px) {
+
+        .orders-page {
+            padding: 30px 15px 60px;
+        }
+
+        .orders-hero {
+            padding: 30px 24px;
+        }
+
+        .order-content {
+            align-items: flex-start;
+        }
+
+        .order-image {
+            width: 90px;
+            height: 85px;
+        }
+
+        .order-price {
+            min-width: auto;
+        }
+
+        .order-details h3 {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 520px) {
+
+        .order-content {
+            flex-wrap: wrap;
+        }
+
+        .order-details {
+            min-width: calc(100% - 110px);
+        }
+
+        .order-price {
+            width: 100%;
+            text-align: left;
+            padding-left: 110px;
+            margin-top: -10px;
+        }
+
+        .order-bottom {
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
+</style>
+
+
+<div class="orders-page">
+
+    <div class="orders-container">
+
+        <!-- HERO -->
+
+        <section class="orders-hero">
+
+            <span class="orders-label">
+                CAMPUSMART ORDERS
+            </span>
+
+            <h1>My Orders</h1>
+
+            <p>
+                Keep track of the products you have purchased
+                from other students.
+            </p>
+
+        </section>
+
+
+        <!-- TITLE -->
+
+        <div class="orders-section-title">
+
+            <h2>Order History</h2>
+
+            <p>
+                Your recently placed orders
+            </p>
+
+        </div>
+
+
+        <!-- ORDERS -->
+
+        {% for order in orders %}
+
+        <div class="order-card">
+
+            <!-- TOP -->
+
+            <div class="order-top">
+
+                <div>
+                    <div class="order-number">
+                        Order #{{ order.id }}
+                    </div>
+
+                    <div class="order-date">
                         {{ order.order_date|date:"d M Y, h:i A" }}
-                    </td>
+                    </div>
+                </div>
 
-                    <td>
+                <span class="status-badge">
+                    {{ order.status }}
+                </span>
 
-                        {% if order.status == "Pending" %}
-                            <span class="badge bg-warning text-dark">
-                                Pending
-                            </span>
+            </div>
 
-                        {% elif order.status == "Confirmed" %}
-                            <span class="badge bg-primary">
-                                Confirmed
-                            </span>
 
-                        {% elif order.status == "Delivered" %}
-                            <span class="badge bg-success">
-                                Delivered
-                            </span>
+            <!-- PRODUCT -->
 
-                        {% else %}
-                            <span class="badge bg-secondary">
-                                {{ order.status }}
-                            </span>
-                        {% endif %}
+            <div class="order-content">
 
-                    </td>
-                </tr>
+                <div class="order-image">
 
-                {% endfor %}
+                    {% if order.product.image %}
 
-            </tbody>
+                    <img
+                        src="{{ order.product.image.url }}"
+                        alt="{{ order.product.name }}"
+                    >
 
-        </table>
+                    {% else %}
+
+                    <div class="order-placeholder">
+                        🛍️
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="order-details">
+
+                    <div class="order-category">
+                        {{ order.product.category.name }}
+                    </div>
+
+                    <h3>
+                        {{ order.product.name }}
+                    </h3>
+
+                    <p>
+                        Seller: {{ order.product.seller.username }}
+                    </p>
+
+                </div>
+
+
+                <div class="order-price">
+
+                    <small>TOTAL</small>
+
+                    <strong>
+                        ₹{{ order.total_price }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOTTOM -->
+
+            <div class="order-bottom">
+
+                <span class="quantity">
+                    Quantity: {{ order.quantity }}
+                </span>
+
+                <a
+                    href="{% url 'product_detail' order.product.pk %}"
+                    class="view-order-btn"
+                >
+                    View Product →
+                </a>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <!-- EMPTY STATE -->
+
+        <div class="empty-orders">
+
+            <div class="empty-orders-icon">
+                🛒
+            </div>
+
+            <h3>
+                No orders yet
+            </h3>
+
+            <p>
+                You haven't purchased anything from CampusMart yet.
+            </p>
+
+            <a
+                href="{% url 'products' %}"
+                class="shop-btn"
+            >
+                Browse Marketplace
+            </a>
+
+        </div>
+
+        {% endfor %}
+
     </div>
-
-    {% else %}
-
-    <div class="text-center mt-5">
-        <h5>No orders yet.</h5>
-        <p class="text-muted">
-            Browse products and place your first order.
-        </p>
-
-        <a href="{% url 'products' %}" class="btn btn-primary">
-            Browse Products
-        </a>
-    </div>
-
-    {% endif %}
 
 </div>
 

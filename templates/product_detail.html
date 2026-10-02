@@ -1,115 +1,349 @@
 {% extends "base.html" %}
 
+{% block title %}{{ product.name }} - CampusMart{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<style>
+.detail-page {
+    background: #f5f7fb;
+    min-height: 100vh;
+    padding: 55px 0 80px;
+}
 
-    <div class="row justify-content-center">
+.detail-container {
+    max-width: 1150px;
+    margin: auto;
+    padding: 0 20px;
+}
 
-        <div class="col-md-9">
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
 
-            <div class="card shadow-sm">
+.back-link:hover {
+    color: #2563eb;
+}
 
-                <div class="row g-0">
+.product-detail-card {
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.10);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
 
-                    <!-- Product Image -->
+.product-image-section {
+    min-height: 540px;
+    background: linear-gradient(145deg, #eef4ff, #f8fafc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 35px;
+}
 
-                    <div class="col-md-5 d-flex align-items-center justify-content-center p-4">
+.product-image-section img {
+    width: 100%;
+    max-height: 470px;
+    object-fit: contain;
+    border-radius: 20px;
+}
 
-                        {% if product.image %}
+.no-image {
+    width: 100%;
+    height: 450px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #e0e7ff, #f1f5f9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 70px;
+}
 
-                            <img
-                                src="{{ product.image.url }}"
-                                alt="{{ product.name }}"
-                                class="img-fluid rounded"
-                                style="max-height:400px; max-width:100%; object-fit:contain;">
+.product-info {
+    padding: 50px;
+}
+
+.condition-badge {
+    display: inline-block;
+    background: #ecfdf5;
+    color: #047857;
+    padding: 8px 15px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.category-text {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.product-title {
+    font-size: 38px;
+    line-height: 1.15;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 18px;
+}
+
+.product-price {
+    font-size: 34px;
+    font-weight: 800;
+    color: #2563eb;
+    margin-bottom: 25px;
+}
+
+.description-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.product-description {
+    color: #64748b;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.info-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.info-item {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 15px;
+}
+
+.info-label {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-weight: 700;
+    color: #334155;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.buy-btn {
+    flex: 1;
+    text-align: center;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    border-radius: 14px;
+    font-weight: 700;
+    transition: 0.25s;
+}
+
+.buy-btn:hover {
+    background: #1d4ed8;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.login-btn {
+    flex: 1;
+    text-align: center;
+    background: #0f172a;
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    border-radius: 14px;
+    font-weight: 700;
+}
+
+.login-btn:hover {
+    background: #1e293b;
+    color: white;
+}
+
+.seller-box {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.seller-box strong {
+    color: #0f172a;
+}
+
+@media (max-width: 850px) {
+    .product-detail-card {
+        grid-template-columns: 1fr;
+    }
+
+    .product-image-section {
+        min-height: 350px;
+    }
+
+    .product-info {
+        padding: 30px 25px;
+    }
+
+    .product-title {
+        font-size: 30px;
+    }
+}
+
+@media (max-width: 500px) {
+    .detail-page {
+        padding-top: 30px;
+    }
+
+    .product-image-section {
+        min-height: 280px;
+        padding: 20px;
+    }
+
+    .product-info {
+        padding: 25px 20px;
+    }
+
+    .info-box {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+</style>
+
+<div class="detail-page">
+
+    <div class="detail-container">
+
+        <a href="{% url 'products' %}" class="back-link">
+            ← Back to Marketplace
+        </a>
+
+        <div class="product-detail-card">
+
+            <!-- Product Image -->
+            <div class="product-image-section">
+
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                    <div class="no-image">
+                        📦
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <!-- Product Information -->
+            <div class="product-info">
+
+                <span class="condition-badge">
+                    {{ product.condition }}
+                </span>
+
+                <div class="category-text">
+                    {{ product.category.name }}
+                </div>
+
+                <h1 class="product-title">
+                    {{ product.name }}
+                </h1>
+
+                <div class="product-price">
+                    ₹{{ product.price }}
+                </div>
+
+                <div class="description-title">
+                    About this product
+                </div>
+
+                <div class="product-description">
+                    {{ product.description }}
+                </div>
+
+                <div class="info-box">
+
+                    <div class="info-item">
+                        <span class="info-label">
+                            Condition
+                        </span>
+
+                        <span class="info-value">
+                            {{ product.condition }}
+                        </span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">
+                            Category
+                        </span>
+
+                        <span class="info-value">
+                            {{ product.category.name }}
+                        </span>
+                    </div>
+
+                </div>
+
+                <!-- Buttons -->
+                <div class="action-buttons">
+
+                    {% if user.is_authenticated %}
+
+                        {% if product.seller != user %}
+
+                            <a href="{% url 'buy_product' product.id %}"
+                               class="buy-btn">
+                                Buy Now
+                            </a>
 
                         {% else %}
 
-                            <div class="text-muted">
-                                No Image Available
-                            </div>
+                            <a href="{% url 'my_listings' %}"
+                               class="buy-btn">
+                                My Listing
+                            </a>
 
                         {% endif %}
 
-                    </div>
+                    {% else %}
 
+                        <a href="{% url 'login' %}"
+                           class="login-btn">
+                            Login to Buy
+                        </a>
 
-                    <!-- Product Information -->
+                    {% endif %}
 
-                    <div class="col-md-7">
+                </div>
 
-                        <div class="card-body p-4">
-
-                            <h2 class="mb-3">
-                                {{ product.name }}
-                            </h2>
-
-                            <p class="text-muted">
-                                Category: {{ product.category.name }}
-                            </p>
-
-                            <h2 class="text-success mb-3">
-                                ₹{{ product.price }}
-                            </h2>
-
-                            <p>
-                                <strong>Condition:</strong>
-                                {{ product.condition }}
-                            </p>
-
-                            <hr>
-
-                            <h5>Product Description</h5>
-
-                            <p>
-                                {{ product.description }}
-                            </p>
-
-                            <p>
-                                <strong>Seller:</strong>
-                                {{ product.seller.username }}
-                            </p>
-
-
-                            <!-- Buy Section -->
-
-                            <div class="mt-4">
-
-                                {% if user.is_authenticated %}
-
-                                    {% if user != product.seller %}
-
-                                        <a
-                                            href="{% url 'buy_product' product.id %}"
-                                            class="btn btn-success btn-lg">
-                                            Buy Now
-                                        </a>
-
-                                    {% else %}
-
-                                        <div class="alert alert-info">
-                                            This is your listing.
-                                        </div>
-
-                                    {% endif %}
-
-                                {% else %}
-
-                                    <a
-                                        href="/login/?next=/product/{{ product.id }}/"
-                                        class="btn btn-primary btn-lg">
-                                        Login to Buy
-                                    </a>
-
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
+                <div class="seller-box">
+                    Seller:
+                    <strong>{{ product.seller.username }}</strong>
                 </div>
 
             </div>

@@ -1,12 +1,347 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="row justify-content-center"><div class="col-md-5">
-<h2>Student Registration</h2>
-<form method="post">{% csrf_token %}
-<input class="form-control mb-3" name="username" placeholder="Username" required>
-<input class="form-control mb-3" type="email" name="email" placeholder="Email">
-<input class="form-control mb-3" type="password" name="password" placeholder="Password" required>
-<button class="btn btn-primary w-100">Register</button>
-</form>
-</div></div>
+
+<style>
+    .register-page {
+        min-height: calc(100vh - 70px);
+        background:
+            radial-gradient(circle at 85% 20%, rgba(102,112,212,.12), transparent 28%),
+            #f7f8fc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 20px 80px;
+    }
+
+    .register-wrapper {
+        width: 100%;
+        max-width: 950px;
+    }
+
+    .register-card {
+        background: white;
+        border: 1px solid #e8eaf1;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 25px 70px rgba(25,30,70,.10);
+    }
+
+    .register-brand {
+        min-height: 540px;
+        padding: 50px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(255,209,102,.16), transparent 28%),
+            linear-gradient(145deg, #080b20, #303b92);
+    }
+
+    .brand-label {
+        color: #ffd166;
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 2px;
+    }
+
+    .register-brand h1 {
+        font-size: 48px;
+        font-weight: 850;
+        letter-spacing: -2px;
+        margin: 12px 0;
+    }
+
+    .register-brand p {
+        color: rgba(255,255,255,.68);
+        line-height: 1.7;
+        max-width: 390px;
+        font-size: 14px;
+    }
+
+    .brand-points {
+        margin-top: 25px;
+    }
+
+    .brand-point {
+        color: rgba(255,255,255,.82);
+        font-size: 13px;
+        margin: 12px 0;
+    }
+
+    .register-form-area {
+        padding: 50px;
+    }
+
+    .register-form-area h2 {
+        color: #171b35;
+        font-size: 30px;
+        font-weight: 850;
+        margin-bottom: 7px;
+    }
+
+    .register-subtitle {
+        color: #858a9c;
+        font-size: 13px;
+        margin-bottom: 28px;
+    }
+
+    .form-label {
+        color: #252945;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .form-control {
+        border: 1px solid #e1e4ed;
+        border-radius: 11px;
+        padding: 12px 14px;
+        font-size: 13px;
+        box-shadow: none !important;
+    }
+
+    .form-control:focus {
+        border-color: #6670d4;
+    }
+
+    .register-btn {
+        width: 100%;
+        border: none;
+        background: #303b92;
+        color: white;
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 14px;
+        font-weight: 850;
+        margin-top: 5px;
+        transition: .25s ease;
+    }
+
+    .register-btn:hover {
+        background: #242d73;
+        transform: translateY(-2px);
+    }
+
+    .login-text {
+        text-align: center;
+        color: #858a9c;
+        font-size: 12px;
+        margin-top: 22px;
+    }
+
+    .login-text a {
+        color: #303b92;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .error-message {
+        background: #fff1f1;
+        border: 1px solid #ffd3d3;
+        color: #b33a3a;
+        padding: 11px 13px;
+        border-radius: 10px;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 767px) {
+
+        .register-page {
+            padding: 30px 15px 60px;
+        }
+
+        .register-brand {
+            min-height: auto;
+            padding: 35px 25px;
+        }
+
+        .register-brand h1 {
+            font-size: 38px;
+        }
+
+        .register-form-area {
+            padding: 30px 25px;
+        }
+    }
+</style>
+
+
+<div class="register-page">
+
+    <div class="register-wrapper">
+
+        <div class="register-card">
+
+            <div class="row g-0">
+
+                <!-- LEFT SIDE -->
+
+                <div class="col-md-6">
+
+                    <div class="register-brand">
+
+                        <span class="brand-label">
+                            JOIN THE CAMPUS
+                        </span>
+
+                        <h1>
+                            CampusMart
+                        </h1>
+
+                        <p>
+                            Create your account and start buying and
+                            selling useful products with fellow students.
+                        </p>
+
+                        <div class="brand-points">
+
+                            <div class="brand-point">
+                                🎓 Made for students
+                            </div>
+
+                            <div class="brand-point">
+                                🛍️ Buy useful products
+                            </div>
+
+                            <div class="brand-point">
+                                💰 Sell your unused items
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT SIDE -->
+
+                <div class="col-md-6">
+
+                    <div class="register-form-area">
+
+                        <h2>
+                            Create Account
+                        </h2>
+
+                        <p class="register-subtitle">
+                            Join CampusMart in a few simple steps.
+                        </p>
+
+
+                        {% if messages %}
+
+                            {% for message in messages %}
+
+                                <div class="error-message">
+                                    {{ message }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% endif %}
+
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+
+                            <!-- USERNAME -->
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Username
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="username"
+                                    class="form-control"
+                                    placeholder="Choose a username"
+                                    autocomplete="username"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- EMAIL -->
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Email Address
+                                </label>
+
+                                <input
+                                    type="email"
+                                    name="email"
+                                    class="form-control"
+                                    placeholder="Enter your email"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- PASSWORD -->
+
+                            <div class="mb-4">
+
+                                <label class="form-label">
+                                    Password
+                                </label>
+
+                                <input
+                                    type="password"
+                                    name="password"
+                                    class="form-control"
+                                    placeholder="Create a password"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- SUBMIT -->
+
+                            <button
+                                type="submit"
+                                class="register-btn"
+                            >
+                                🚀 Create Account
+                            </button>
+
+                        </form>
+
+
+                        <div class="login-text">
+
+                            Already have an account?
+
+                            <a href="{% url 'login' %}">
+                                Sign In
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}

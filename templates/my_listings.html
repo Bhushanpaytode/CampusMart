@@ -2,66 +2,353 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<style>
+    .listings-page {
+        background: #f7f8fc;
+        min-height: calc(100vh - 70px);
+        padding: 50px 20px 80px;
+    }
 
-    <h2 class="mb-4">My Listings</h2>
+    .listings-container {
+        max-width: 1180px;
+        margin: auto;
+    }
 
-    <div class="row">
+    .listings-hero {
+        background:
+            radial-gradient(circle at 85% 20%, rgba(255, 209, 102, .14), transparent 25%),
+            linear-gradient(135deg, #080b20, #252b63);
+        border-radius: 26px;
+        padding: 42px;
+        color: white;
+        margin-bottom: 35px;
+        position: relative;
+        overflow: hidden;
+    }
 
-        {% for product in products %}
+    .listings-label {
+        color: #ffd166;
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 2px;
+    }
 
-        <div class="col-md-4 mb-4">
+    .listings-hero h1 {
+        font-size: clamp(34px, 5vw, 52px);
+        font-weight: 850;
+        letter-spacing: -1.5px;
+        margin: 8px 0;
+    }
 
-            <div class="card h-100 shadow-sm">
+    .listings-hero p {
+        color: rgba(255,255,255,.65);
+        margin: 0;
+        max-width: 600px;
+    }
 
-                {% if product.image %}
+    .sell-btn {
+        display: inline-block;
+        margin-top: 22px;
+        background: #ffd166;
+        color: #171b35;
+        padding: 11px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 850;
+    }
 
-                    <img
-                        src="{{ product.image.url }}"
-                        alt="{{ product.name }}"
-                        class="card-img-top"
-                        style="height:220px; object-fit:contain; padding:10px;">
+    .sell-btn:hover {
+        color: #171b35;
+        transform: translateY(-2px);
+    }
 
-                {% else %}
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 22px;
+    }
 
-                    <div
-                        class="d-flex align-items-center justify-content-center bg-light"
-                        style="height:220px;">
-                        <span class="text-muted">No Image</span>
+    .section-title h2 {
+        color: #171b35;
+        font-size: 28px;
+        font-weight: 850;
+        margin: 0;
+    }
+
+    .section-title span {
+        color: #8a8fa1;
+        font-size: 13px;
+    }
+
+    .listing-card {
+        height: 100%;
+        background: white;
+        border: 1px solid #e8eaf1;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: .3s ease;
+    }
+
+    .listing-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 45px rgba(30,35,80,.12);
+    }
+
+    .listing-image {
+        height: 220px;
+        background: #eef0f6;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .listing-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: .4s ease;
+    }
+
+    .listing-card:hover .listing-image img {
+        transform: scale(1.05);
+    }
+
+    .listing-no-image {
+        height: 100%;
+        display: grid;
+        place-items: center;
+        font-size: 55px;
+    }
+
+    .condition-badge {
+        position: absolute;
+        top: 13px;
+        left: 13px;
+        background: white;
+        color: #303b92;
+        padding: 6px 11px;
+        border-radius: 30px;
+        font-size: 10px;
+        font-weight: 850;
+        box-shadow: 0 5px 15px rgba(0,0,0,.1);
+    }
+
+    .listing-body {
+        padding: 20px;
+    }
+
+    .listing-category {
+        color: #6670d4;
+        font-size: 10px;
+        font-weight: 850;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+    }
+
+    .listing-body h3 {
+        color: #171b35;
+        font-size: 19px;
+        font-weight: 800;
+        margin: 6px 0;
+    }
+
+    .listing-description {
+        color: #858a9c;
+        font-size: 13px;
+        line-height: 1.6;
+        min-height: 42px;
+    }
+
+    .listing-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 18px;
+    }
+
+    .listing-price {
+        color: #171b35;
+        font-size: 20px;
+        font-weight: 850;
+    }
+
+    .view-btn {
+        background: #303b92;
+        color: white;
+        padding: 9px 13px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .view-btn:hover {
+        background: #242d73;
+        color: white;
+    }
+
+    .empty-listings {
+        background: white;
+        border: 1px solid #e8eaf1;
+        border-radius: 22px;
+        padding: 80px 20px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+    }
+
+    .empty-listings h3 {
+        color: #171b35;
+        font-weight: 850;
+    }
+
+    .empty-listings p {
+        color: #858a9c;
+        margin-bottom: 20px;
+    }
+
+    .empty-sell-btn {
+        display: inline-block;
+        background: #303b92;
+        color: white;
+        padding: 11px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .empty-sell-btn:hover {
+        color: white;
+        background: #242d73;
+    }
+
+    @media (max-width: 576px) {
+        .listings-page {
+            padding: 30px 15px 60px;
+        }
+
+        .listings-hero {
+            padding: 30px 24px;
+        }
+
+        .section-title {
+            align-items: start;
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+
+<div class="listings-page">
+
+    <div class="listings-container">
+
+        <!-- HERO -->
+
+        <section class="listings-hero">
+
+            <span class="listings-label">
+                SELL ON CAMPUSMART
+            </span>
+
+            <h1>My Listings</h1>
+
+            <p>
+                Manage the products you have listed for other students
+                to discover and buy.
+            </p>
+
+            <a href="{% url 'sell_product' %}" class="sell-btn">
+                + Sell New Product
+            </a>
+
+        </section>
+
+
+        <!-- LISTINGS -->
+
+        <div class="section-title">
+
+            <div>
+                <h2>Your Products</h2>
+                <span>
+                    Products currently listed by you
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            {% for product in products %}
+
+            <div class="col-12 col-sm-6 col-lg-4">
+
+                <div class="listing-card">
+
+                    <!-- IMAGE -->
+
+                    <div class="listing-image">
+
+                        {% if product.image %}
+
+                        <img
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                        >
+
+                        {% else %}
+
+                        <div class="listing-no-image">
+                            🛍️
+                        </div>
+
+                        {% endif %}
+
+                        <span class="condition-badge">
+                            {{ product.condition }}
+                        </span>
+
                     </div>
 
-                {% endif %}
 
-                <div class="card-body d-flex flex-column">
+                    <!-- DETAILS -->
 
-                    <h5 class="card-title">
-                        {{ product.name }}
-                    </h5>
+                    <div class="listing-body">
 
-                    <p class="text-muted">
-                        Category: {{ product.category.name }}
-                    </p>
+                        <div class="listing-category">
+                            {{ product.category.name }}
+                        </div>
 
-                    <h5 class="text-success">
-                        ₹{{ product.price }}
-                    </h5>
+                        <h3>
+                            {{ product.name }}
+                        </h3>
 
-                    <p>
-                        <strong>Condition:</strong>
-                        {{ product.condition }}
-                    </p>
+                        <div class="listing-description">
+                            {{ product.description|truncatechars:75 }}
+                        </div>
 
-                    <p>
-                        {{ product.description|truncatewords:12 }}
-                    </p>
 
-                    <div class="mt-auto">
+                        <div class="listing-footer">
 
-                        <a
-                            href="{% url 'product_detail' product.id %}"
-                            class="btn btn-primary">
-                            View Details
-                        </a>
+                            <div class="listing-price">
+                                ₹{{ product.price }}
+                            </div>
+
+                            <a
+                                href="{% url 'product_detail' product.pk %}"
+                                class="view-btn"
+                            >
+                                View Details →
+                            </a>
+
+                        </div>
 
                     </div>
 
@@ -69,20 +356,41 @@
 
             </div>
 
+            {% empty %}
+
+            <!-- EMPTY STATE -->
+
+            <div class="col-12">
+
+                <div class="empty-listings">
+
+                    <div class="empty-icon">
+                        📦
+                    </div>
+
+                    <h3>
+                        You haven't listed anything yet
+                    </h3>
+
+                    <p>
+                        Have something you no longer need?
+                        List it and let another student find it.
+                    </p>
+
+                    <a
+                        href="{% url 'sell_product' %}"
+                        class="empty-sell-btn"
+                    >
+                        + Sell Your First Product
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
         </div>
-
-        {% empty %}
-
-        <div class="text-center mt-4">
-            <h5>You have not listed any products yet.</h5>
-
-            <a href="{% url 'sell_product' %}"
-               class="btn btn-success mt-2">
-                Sell a Product
-            </a>
-        </div>
-
-        {% endfor %}
 
     </div>
 
